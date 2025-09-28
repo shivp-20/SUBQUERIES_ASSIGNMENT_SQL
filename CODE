@@ -1,0 +1,241 @@
+use hr;
+-- 1. Write a query to find the name (first_name, last_name) and the salary of the employees who have a higher salary than the employee whose last_name='Bull'. 
+SELECT first_name , last_name , salary
+from employees 
+where salary > (select salary 
+				from employees 
+				where last_name = 'Bull');
+                
+                
+-- 2. Write a query to find the name (first_name, last_name) of all employees who works in the IT department.
+select * from employees;
+select e.first_name, e.last_name, d.department_name 
+from employees e
+join departments d on d.department_id = e.department_id 
+where d.department_name in (select department_name 
+                            from departments  
+                            where department_name = "IT");
+                            
+
+
+                            
+-- 3. Write a query to find the name (first_name, last_name) of the employees who have a manager and worked in a USA based department. 
+-- Hint : Write single-row and multiple-row subqueries
+
+select e.first_name , e.last_name , e.manager_id , c.country_name 
+from employees e 
+join departments d on d.department_id = e.department_id
+join locations l on l.location_id = d.location_id 
+join countries c on c.country_id = l.country_id
+where c.country_name = (select country_name from countries where country_name ='united states of america');
+
+
+
+
+
+-- 4. Write a query to find the name (first_name, last_name) of the employees who are managers. 
+select first_name , last_name
+from employees e 
+join  departments d on d.department_id = e.department_id 
+where d.department_name  in 
+						(select department_name 
+						from departments 
+						where department_name = "maganer");
+
+-- 5. Write a query to find the name (first_name, last_name), and salary of the employees whose salary is greater than the average salary. 
+select first_name , last_name , salary 
+from employees 
+where salary > (select avg(salary)
+                 from employees );
+                 
+                 
+                 
+-- 6. Write a query to find the name (first_name, last_name), and salary of the employees whose salary is equal to the minimum salary for their job grade. 
+select first_name , last_name , salary 
+from employees 
+where salary = (select min(salary) from employees);
+
+
+
+-- 7. Write a query to find the name (first_name, last_name), and salary of the employees who earns more than the average salary and works in any of the IT departments. 
+select first_name , last_name , salary 
+from employees 
+where salary > (select avg(salary) 
+                from employees e
+                join departments d on d.department_id = e.department_id 
+                where d.department_name = 'IT');
+                
+                
+                
+-- 8. Write a query to find the name (first_name, last_name), and salary of the employees who earns more than the earning of Mr. Bell.
+select first_name , last_name , salary
+from employees 
+where salary > (select salary from employees where last_name = 'bell');
+
+select * from employees;
+select * from departments;
+-- 9. Write a query to find the name (first_name, last_name), and salary of the employees who earn the same salary as the minimum salary for all departments. 
+select first_name , last_name , salary 
+from employees 
+where salary  = (select min(e.salary) from employees e 
+                 join departments d on d.department_id = e.department_id);
+
+
+-- 10. Write a query to find the name (first_name, last_name), and salary of the employees whose salary is greater than the average salary of all departments.
+select first_name , last_name , salary 
+from employees
+where salary > (select avg(salary) from employees);
+
+
+-- 11. Write a query to find the name (first_name, last_name) and salary of the employees who earn a salary that is 
+-- higher than the salary of all the Shipping Clerk (JOB_ID = 'SH_CLERK'). Sort the results of the salary of the lowest to highest. 
+select first_name , last_name , salary 
+from employees 
+where salary > all (select salary 
+                  from employees 
+                  where job_id in ('SH_CLERK')) 
+order by salary asc;
+
+
+-- 12. Write a query to find the name (first_name, last_name) of the employees who are not supervisors. 
+select first_name, last_name ,JOB_ID
+from employees 
+where job_id IN (select job_id 
+from employees 
+where job_id not in ('ST_MAN','ST_CLERK','SA_REP'));
+
+
+
+
+-- 13. Write a query to display the employee ID, first name, last name, and department names of all employees. 
+select e.first_name, e.last_name , e.employee_id, d.department_name 
+from employees e 
+join departments d on d.department_id = e.department_id
+where d.department_name in (select department_name from departments);
+
+
+
+-- 14. Write a query to display the employee ID, first name, last name, salary of all employees whose salary is above average for their departments.
+select employee_id, first_name , last_name , salary
+from employees
+where salary > (select avg(salary) from employees);
+
+
+-- 15. Write a query to fetch even numbered records from the employees table. 
+select * from employees;
+select employee_id
+from employees
+where employee_id % 2;
+
+
+
+
+-- 16. Write a query to find the 5th maximum salary in the employees table. 
+select first_name , last_name ,salary
+from employees
+order by salary desc limit 1 offset 4 ;
+
+
+
+-- 17. Write a query to find the 4th minimum salary in the employees table. 
+select first_name , last_name , salary
+from employees 
+order by salary asc limit 1 offset 3;
+
+
+-- 18. Write a query to select the last 10 records from a table. 
+select * from employees 
+order by employee_id desc limit 10;
+
+
+-- 19. Write a query to list the department ID and name of all the departments where no employee is working. 
+select department_id, employee_id 
+from employees 
+where employee_id is null;
+
+
+-- 20. Write a query to get 3 maximum salaries. 
+select * from employees
+order by salary desc limit 3;
+
+
+-- 21. Write a query to get 3 minimum salaries. 
+select * from employees 
+order by salary asc limit 3;
+
+
+-- 22. Write a query to get nth max salaries of employees. 
+select * from employees
+order by salary desc
+limit 1 offset 2;
+
+-- Write a query that returns all employees who have a salary greater than the average salary of their department.
+select *
+from employees
+where salary > (select avg(salary) from employees);
+
+
+-- Write a query that returns the names of all departments that have more than 10 employees.
+select d.department_name, count(employee_id) as no_emp
+from departments d 
+join employees e on e.department_id = d.department_id
+group by d.department_name 
+having no_emp > 10;
+
+
+-- Write a query that returns the names of all employees who work in departments that have a total salary greater than $1,000,000.
+select e.first_name, e.last_name, d.department_name, sum(salary) as total_salary
+from employees e
+join departments d on d.department_id = e.department_id 
+group by e.first_name, e.last_name,d.department_name
+having total_salary > 10000;
+
+
+
+-- Write a query that returns the average salary of all employees who have been with the company for less than 3 years.
+select avg(salary) as avg_salary
+from employees
+where hire_date > current_date()- interval 3 year;
+
+
+-- Write a query that returns the names of all employees who have the same manager as the employee with ID 123.
+select first_name , last_name , manager_id 
+from employees
+where manager_id in (select manager_id from employees where manager_id = 123.0);
+
+
+
+-- Write a query that returns the department name and average salary of the department with the highest average salary.
+select d.department_name, avg(salary) as avg_sal
+from employees e
+join departments d on d.department_id = e.department_id
+group by d.department_name
+having avg(salary)= (select max(avg_sal) 
+                     from 
+                     (select avg(salary) as avg_sal 
+                     from employees 
+                     group by department_id) as dept_avg
+                     );
+
+
+-- Write a query that returns the names of all employees who have a salary greater than the highest salary in the sales department.
+select * from company_data
+where salary > (select max(salary) from company_data);
+
+use hr;
+-- Write a query that returns the names of all employees who have a manager with a salary greater than $100,000.
+select first_name, last_name , manager_id from employees
+where salary > all (select salary from employees where manager_id is not null);
+
+
+
+-- Write a query that returns the names of all departments that have at least one employee who has been with the company for more than 5 years
+select first_name , last_name , employee_id
+from employees 
+where employee_id = all (select employee_id from employees where hire_date <= current_date()-interval 5 year);
+
+
+-- Write a query that returns the name and salary of the employee with the second-highest salary in the company.
+select first_name , last_name , salary
+from employees
+order by salary desc limit 1 offset 1 ; 
